@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Ecosystem & Group Intention Simulation (ADAPT-GRIS)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        /* STANDAR WEB 3: Background Mesh / Dots & Deep Contrast */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #FAFAFA; /* Web 3 Light White */
+            background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+            background-size: 24px 24px;
+            transition: background-color 0.4s ease; 
+            color: #09090b; /* Web 3 Deep Zinc/Black */
+        }
+        
+        /* Web 3 Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Kustomisasi Slider Standar Industri Web 3 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: #09090b; /* Deep black thumb */
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e4e4e7;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #4f46e5; /* Indigo glow on hover */
+            box-shadow: 0 0 0 4px rgba(255,255,255,1), 0 6px 14px rgba(79, 70, 229, 0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #e4e4e7 0%, #d4d4d8 100%);
+            border-radius: 9999px;
+            border: 1px solid #f4f4f5;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        /* Animasi Transisi Halus */
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Kustom Scrollbar Web 3 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+
+        /* Tabel Excel Style untuk DSS Panel 4 */
+        .excel-table th { background-color: #f4f4f5; border: 1px solid #e4e4e7; padding: 8px; font-weight: 700; color: #52525b; text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; }
+        .excel-table td { border: 1px solid #e4e4e7; padding: 8px; color: #3f3f46; font-size: 12px; }
+        .excel-table tr:nth-child(even) { background-color: #fafafa; }
+        .excel-table tr:hover { background-color: #f0fdf4; }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col" id="mainBody">
+
+    <div class="max-w-7xl mx-auto w-full flex-grow flex flex-col space-y-8 relative">
+        
+        <header id="mainHeader" class="text-center space-y-4 glass-panel p-10 rounded-[2rem] relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-3/4 h-32 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <div class="absolute top-5 right-5 flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-2xl border border-zinc-200 shadow-sm z-10 transition-transform hover:scale-105">
+                <span class="text-[11px] text-zinc-500 font-bold uppercase tracking-widest">Tema Latar</span>
+                <input type="color" id="bgColorPicker" onchange="changeBgColor(this.value)" value="#FAFAFA" class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent">
+            </div>
+
+            <div class="relative z-10">
+                <h3 class="text-xs font-black text-indigo-600 tracking-[0.2em] uppercase mb-2">Universitas Negeri Jakarta</h3>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight text-transparent bg-clip-text bg-gradient-to-br from-zinc-950 to-zinc-500">
+                    ADAPT-GRIS System
+                </h1>
+                <div class="text-zinc-500 max-w-3xl mx-auto text-sm md:text-base mt-4 font-medium leading-relaxed">
+                    Pemodelan Theory Planned Behavior (TPB) untuk Mengevaluasi Dampak Kebijakan Mitigasi Struktural dan Non-Struktural terhadap Ketahanan Bencana Masyarakat dalam Menghadapi Banjir Pesisir<span class="text-zinc-800 font-bold"></span><span class="text-zinc-800 font-bold"></span>.
+                    <p class="font-semibold mt-2"><b>(Feryl Ilyasa, Henita Rahmayanti & Bagus Sumargo)</p></b>
+                </div>
+            </div>
+            
+            <div class="flex justify-center gap-3 mt-8 pt-6 border-t border-zinc-200/50 flex-wrap relative z-10">
+                <button id="btnTabAkademik" onclick="switchTab('akademik')" class="px-7 py-3 bg-zinc-950 text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-200">
+                    🎓 Mode Akademik
+                </button>
+                <button id="btnTabWarga" onclick="switchTab('warga')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
+                    📱 Mode Warga
+                </button>
+                <button id="btnTabSurvei" onclick="switchTab('survei')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
+                    📝 Pembuat Survei
+                </button>
+                <button id="btnTabDSS" onclick="switchTab('dss')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
+                    📊 Dasbor DSS
+                </button>
+            </div>
+        </header>
+
+        <div id="viewAkademik" class="fade-in space-y-6">
+            
+            <div class="flex justify-end gap-3" id="action-buttons-akademik">
+                <button onclick="resetSimulation()" class="px-5 py-2.5 bg-white text-zinc-700 border border-zinc-200 text-sm font-bold rounded-xl hover:bg-zinc-50 shadow-sm transition-all flex items-center hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reset Parameter
+                </button>
+                <button onclick="exportToPDF()" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-[0_4px_14px_rgba(79,70,229,0.3)] transition-all flex items-center hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Export Laporan
+                </button>
+            </div>
+
+            <div id="pdf-content" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-4 space-y-8">
+                    
+                    <div class="glass-panel p-6 rounded-[2rem]">
+                        <h2 class="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2"></span> Uji Skenario
+                        </h2>
+                        
+                        <div class="space-y-5 max-h-[450px] overflow-y-auto pr-2">
+                            
+                            <div>
+                                <h3 class="text-[10px] font-black text-indigo-500 mb-3 tracking-widest uppercase">Mitigasi Non-Struktural</h3>
+                                <div class="space-y-2">
+                                    <button onclick="applyScenario(90, 50, 40)" class="w-full text-left p-3 bg-white hover:border-indigo-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-indigo-600 transition-colors">1. Edukasi Kebencanaan</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Sikap(90) Norma(50) PBC(40)</span>
+                                    </button>
+                                    <button onclick="applyScenario(50, 90, 50)" class="w-full text-left p-3 bg-white hover:border-indigo-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-indigo-600 transition-colors">2. Intervensi Tokoh Agama</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Sikap(50) Norma(90) PBC(50)</span>
+                                    </button>
+                                    <button onclick="applyScenario(85, 50, 30)" class="w-full text-left p-3 bg-white hover:border-orange-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-orange-600 transition-colors">3. Kampanye Sadar Risiko</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Menguji efek <em>Intention-Behavior Gap</em>.</span>
+                                    </button>
+                                    <button onclick="applyScenario(70, 95, 60)" class="w-full text-left p-3 bg-white hover:border-indigo-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-indigo-600 transition-colors">4. Peringatan Dini & RT/RW</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Menguji efek kohesi komunal.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-[10px] font-black text-cyan-600 mb-3 tracking-widest uppercase">Mitigasi Struktural</h3>
+                                <div class="space-y-2">
+                                    <button onclick="applyScenario(60, 60, 95)" class="w-full text-left p-3 bg-white hover:border-cyan-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-cyan-600 transition-colors">5. Subsidi Infrastruktur</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Sikap(60) Norma(60) PBC(95)</span>
+                                    </button>
+                                    <button onclick="applyScenario(70, 60, 90)" class="w-full text-left p-3 bg-white hover:border-cyan-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-cyan-600 transition-colors">6. Subsidi Material Warga</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Penyelesaian hambatan ekonomi mikro.</span>
+                                    </button>
+                                    <button onclick="applyScenario(30, 40, 80)" class="w-full text-left p-3 bg-white hover:border-rose-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-rose-600 transition-colors">7. Tanggul Raksasa NCICD</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Menguji bahaya Moral Hazard.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-[10px] font-black text-emerald-600 mb-3 tracking-widest uppercase">Hibrida & SEM</h3>
+                                <div class="space-y-2">
+                                    <button onclick="applyScenario(80, 85, 85)" class="w-full text-left p-3 bg-white hover:border-emerald-400 border border-zinc-200 rounded-2xl transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                                        <span class="font-bold text-zinc-900 text-sm group-hover:text-emerald-600 transition-colors">8. Padat Karya Komunitas</span>
+                                        <span class="text-[11px] text-zinc-500 leading-tight block mt-1">Sinergi ideal fisik & sosial.</span>
+                                    </button>
+                                    <button onclick="applyScenario(90, 85, 90)" class="w-full text-left p-3 bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 rounded-2xl transition-all group shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <span class="font-bold text-white text-sm relative z-10 flex items-center">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            9. Uji Simultan SEM (Full)
+                                        </span>
+                                        <span class="text-[11px] text-zinc-400 leading-tight block mt-1 relative z-10">Kalkulasi total Path Coefficient.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-[2rem]">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xs font-black text-zinc-400 uppercase tracking-widest flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span> Parameter Eksogen (X)
+                            </h2>
+                            <span class="text-[9px] bg-zinc-100 text-zinc-500 px-2 py-0.5 rounded font-bold border border-zinc-200">Terhubung DSS (Auto-Sync) ✅</span>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                                <label class="flex justify-between text-sm font-bold text-zinc-800 mb-3">
+                                    <span>Sikap (Attitude)</span>
+                                    <span id="valSikap" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg text-xs tracking-wide">50%</span>
+                                </label>
+                                <input type="range" id="inputSikap" min="0" max="100" value="50" oninput="updateSimulation()">
+                            </div>
+                            <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                                <label class="flex justify-between text-sm font-bold text-zinc-800 mb-3">
+                                    <span>Norma Subjektif</span>
+                                    <span id="valNorma" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg text-xs tracking-wide">50%</span>
+                                </label>
+                                <input type="range" id="inputNorma" min="0" max="100" value="50" oninput="updateSimulation()">
+                            </div>
+                            <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                                <label class="flex justify-between text-sm font-bold text-zinc-800 mb-3">
+                                    <span>PBC (Kontrol Perilaku)</span>
+                                    <span id="valPBC" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg text-xs tracking-wide">50%</span>
+                                </label>
+                                <input type="range" id="inputPBC" min="0" max="100" value="50" oninput="updateSimulation()">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <div class="glass-panel p-6 md:p-8 rounded-[2.5rem]">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xs font-black text-zinc-400 uppercase tracking-widest flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> Proyeksi Endogen (Y)
+                            </h2>
+                            <span class="text-[10px] font-bold text-zinc-500 bg-zinc-200/50 px-3 py-1 rounded-full uppercase tracking-wider">Live Rendering</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm mb-6 overflow-x-auto">
+                            <h3 class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-4 text-center">Model Dinamis TPB & Disaster Resilience</h3>
+                            <div class="flex items-center justify-between min-w-[500px] gap-4">
+                                
+                                <div class="flex flex-col gap-3 w-1/3">
+                                    <div id="nodeSikap" class="border-2 p-3 rounded-xl text-center transition-all duration-500">
+                                        <div class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">Sikap (X1)</div>
+                                        <div class="text-lg font-black text-indigo-600 val-node">50%</div>
+                                    </div>
+                                    <div id="nodeNorma" class="border-2 p-3 rounded-xl text-center transition-all duration-500">
+                                        <div class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">Norma (X2)</div>
+                                        <div class="text-lg font-black text-indigo-600 val-node">50%</div>
+                                    </div>
+                                    <div id="nodePBC" class="border-2 p-3 rounded-xl text-center transition-all duration-500">
+                                        <div class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">PBC (X3)</div>
+                                        <div class="text-lg font-black text-indigo-600 val-node">50%</div>
+                                    </div>
+                                </div>
+
+                                <div class="text-zinc-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </div>
+
+                                <div class="flex flex-col gap-6 w-1/3">
+                                    <div id="nodeNiat" class="border-2 p-3 rounded-xl text-center transition-all duration-500 relative">
+                                        <div class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">Niat (Y1)</div>
+                                        <div class="text-lg font-black text-purple-600 val-node">50%</div>
+                                        <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-zinc-300">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div id="nodePerilaku" class="border-2 p-3 rounded-xl text-center transition-all duration-500">
+                                        <div class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">Aksi Aktual (Y2)</div>
+                                        <div class="text-lg font-black text-purple-600 val-node">50%</div>
+                                    </div>
+                                </div>
+
+                                <div class="text-zinc-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </div>
+
+                                <div class="flex flex-col w-1/3">
+                                    <div id="nodeKetahanan" class="border-2 p-5 rounded-2xl text-center transition-all duration-500 shadow-sm">
+                                        <div class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Ketahanan (Y3)</div>
+                                        <div class="text-3xl font-black text-emerald-600 val-node">50%</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="relative h-64 w-full">
+                            <canvas id="tpbChart"></canvas>
+                        </div>
+                        
+                        <div class="mt-6 pt-5 border-t border-zinc-200/60 flex justify-between items-center bg-white/50 p-4 rounded-2xl">
+                            <div class="text-xs text-zinc-500 font-medium">Algoritma: <strong class="text-zinc-800">SEM-PLS Path Analytics</strong></div>
+                            <div id="gofDisplay" class="font-black text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-xl border">GoF: 0.000</div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel p-6 md:p-8 rounded-[2.5rem] min-h-[300px]">
+                        <h2 class="text-xs font-black text-zinc-400 uppercase tracking-widest mb-6 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> Engine Kausalitas Sistemik
+                        </h2>
+                        <div id="analisisText" class="text-sm text-zinc-600 leading-relaxed space-y-4"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="viewWarga" class="hidden fade-in max-w-3xl mx-auto w-full space-y-8">
+            <div class="glass-panel p-8 md:p-10 rounded-[2.5rem] relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500"></div>
+                
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black text-zinc-900 tracking-tight">Kalkulator Kesiapsiagaan</h2>
+                    <p class="text-zinc-500 text-sm mt-2 font-medium">Ukur level ketangguhan rumah tangga Anda secara mandiri melalui pertanyaan singkat berikut.</p>
+                </div>
+
+                <div class="space-y-8">
+                    
+                    <div class="bg-white border border-zinc-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                        <label class="block text-zinc-900 font-extrabold mb-1 text-lg">1. Kepedulian (Sikap)</label>
+                        <p class="text-[13px] text-zinc-600 leading-relaxed font-medium mb-5">Seberapa sering Anda mengecek kondisi saluran air atau memantau info peringatan dini cuaca?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaSikapVal" value="15" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">🤷‍♂️</span>
+                                    <div class="font-bold text-[13px]">Jarang / Pasrah Saja</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaSikapVal" value="50" class="peer sr-only" onchange="hitungWarga()" checked>
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">👀</span>
+                                    <div class="font-bold text-[13px]">Kadang-kadang</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaSikapVal" value="85" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">🔍</span>
+                                    <div class="font-bold text-[13px]">Rutin & Sangat Proaktif</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-zinc-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                        <label class="block text-zinc-900 font-extrabold mb-1 text-lg">2. Lingkungan RT/RW (Norma)</label>
+                        <p class="text-[13px] text-zinc-600 leading-relaxed font-medium mb-5">Bagaimana keaktifan warga di lingkungan RT/RW Anda dalam bergotong royong mencegah banjir rob?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaNormaVal" value="15" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">🤫</span>
+                                    <div class="font-bold text-[13px]">Apatis / Tidak Ada Ajakan</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaNormaVal" value="50" class="peer sr-only" onchange="hitungWarga()" checked>
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">🤝</span>
+                                    <div class="font-bold text-[13px]">Sesekali Ada Imbauan</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaNormaVal" value="85" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">💪</span>
+                                    <div class="font-bold text-[13px]">Sangat Kompak & Aktif</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-zinc-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                        <label class="block text-zinc-900 font-extrabold mb-1 text-lg">3. Dana & Material (Kontrol)</label>
+                        <p class="text-[13px] text-zinc-600 leading-relaxed font-medium mb-5">Jika besok ada peringatan rob tinggi, apakah Anda siap secara dana atau material (seperti karung pasir) untuk peninggian?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaPBCVal" value="15" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">💸</span>
+                                    <div class="font-bold text-[13px]">Tidak Punya Dana Sama Sekali</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaPBCVal" value="50" class="peer sr-only" onchange="hitungWarga()" checked>
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-amber-50 peer-checked:border-amber-500 peer-checked:text-amber-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">📦</span>
+                                    <div class="font-bold text-[13px]">Ada Sedikit Tabungan Terbatas</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer h-full">
+                                <input type="radio" name="wargaPBCVal" value="85" class="peer sr-only" onchange="hitungWarga()">
+                                <div class="h-full p-4 text-center border border-zinc-200 rounded-xl peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 hover:bg-zinc-50 transition-all flex flex-col justify-center">
+                                    <span class="block text-2xl mb-2">🧱</span>
+                                    <div class="font-bold text-[13px]">Sangat Siap Finansial & Material</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 pt-8 border-t border-zinc-200">
+                    <div id="hasilWargaBox" class="bg-zinc-50 p-8 rounded-[2.5rem] text-center border border-zinc-200 shadow-inner transition-colors duration-300 relative">
+                        <p class="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] mb-4">Rapor Kesiapsiagaan Keluarga</p>
+                        
+                        <div id="badgeContainer" class="flex justify-center mb-2"></div>
+                        
+                        <div id="skorWarga" class="text-6xl font-black text-zinc-900 mb-2 tracking-tighter transition-all">50%</div>
+                        <p id="rekomendasiWarga" class="text-sm text-zinc-600 leading-relaxed font-medium max-w-xl mx-auto"></p>
+                        
+                        <div id="actionPlanContainer" class="mt-6 pt-6 border-t border-zinc-200/60 text-left hidden">
+                            <p class="text-xs font-black text-zinc-900 uppercase tracking-widest mb-4">Action Plan Prioritas:</p>
+                            <ul id="actionPlanList" class="text-[13px] text-zinc-600 space-y-3 pl-4 list-disc marker:text-indigo-500 font-medium"></ul>
+                        </div>
+
+                        <div id="aiPredictionContainer" class="mt-6 pt-6 border-t border-zinc-200/60 text-left hidden">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-indigo-500 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest mr-2">AI Insight</span>
+                            </div>
+                            <p id="aiPredictionText" class="text-[13px] text-zinc-700 bg-white p-4 rounded-2xl border border-zinc-200 leading-relaxed font-medium shadow-sm"></p>
+                        </div>
+                        
+                        <div id="wargaActionButtons" class="mt-8 flex flex-col sm:flex-row gap-3 justify-center pt-6 border-t border-zinc-200/60">
+                            <button onclick="downloadRaporWarga()" class="px-6 py-3.5 bg-zinc-900 text-white text-[13px] font-bold rounded-xl hover:bg-zinc-800 shadow-lg transition-all flex items-center justify-center hover:-translate-y-0.5">
+                                📄 Unduh Rapor PDF
+                            </button>
+                            <button onclick="shareToWA()" class="px-6 py-3.5 bg-[#25D366] text-white text-[13px] font-bold rounded-xl hover:bg-[#1ebd5a] shadow-lg transition-all flex items-center justify-center hover:-translate-y-0.5">
+                                💬 Pamerkan ke WhatsApp
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="viewSurvei" class="hidden fade-in space-y-8">
+            <div id="surveiHeader" class="glass-panel p-6 md:p-10 rounded-[2.5rem]">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-zinc-200 pb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-zinc-900 tracking-tight">Pembuat Instrumen Riset</h2>
+                        <p class="text-sm text-zinc-500 mt-1 font-medium mb-3">Rancang, tag TPB, dan distribusikan kuesioner Anda kepada masyarakat.</p>
+                    </div>
+                    <div class="flex gap-2 bg-zinc-100 p-1 rounded-xl border border-zinc-200" id="surveiToggleContainer">
+                        <button id="btnSurveiEdit" onclick="toggleSurveiMode('edit')" class="px-4 py-2 bg-white shadow-sm text-zinc-900 text-xs font-bold rounded-lg transition-all">✏️ Mode Editor</button>
+                        <button id="btnSurveiFill" onclick="toggleSurveiMode('fill')" class="px-4 py-2 text-zinc-500 hover:text-zinc-900 text-xs font-bold rounded-lg transition-all">👁️ Tampilan Warga / Share</button>
+                    </div>
+                </div>
+
+                <div id="surveiEditMode" class="space-y-6">
+                    <div id="surveyQuestionsContainer" class="space-y-4">
+                        </div>
+                    
+                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-xl mt-6">
+                        <p class="text-[11px] text-indigo-700 font-bold mb-3 uppercase tracking-widest">💡 Tambah Item Pertanyaan:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="addSurveyQuestion('text')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Teks Singkat</button>
+                            <button onclick="addSurveyQuestion('custom_radio')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Pilihan Ganda (Custom)</button>
+                            <button onclick="addSurveyQuestion('custom_checkbox')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Checkbox (Custom)</button>
+                            <button onclick="addSurveyQuestion('scale')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Skala Likert (1-5)</button>
+                            <button onclick="addSurveyQuestion('guttman')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Skala Guttman</button>
+                            <button onclick="addSurveyQuestion('rating')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Rating Scale (1-10)</button>
+                            <button onclick="addSurveyQuestion('semantic')" class="px-3 py-2 bg-white border border-zinc-200 hover:border-indigo-300 text-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Semantic Diff</button>
+                            <button onclick="addSurveyQuestion('text_block')" class="px-3 py-2 bg-zinc-800 text-white border border-zinc-900 hover:bg-zinc-700 text-xs font-bold rounded-lg transition-all shadow-sm">+ Blok Instruksi</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="surveiFillMode" class="hidden">
+                    <div class="flex justify-between items-start md:items-center bg-indigo-50 border border-indigo-100 p-6 rounded-2xl mb-6 flex-col md:flex-row gap-4">
+                        <div>
+                            <h3 class="text-lg font-black text-indigo-900 mb-2">Kuesioner Ketahanan Sosial</h3>
+                            <p class="text-sm text-indigo-700 font-medium">Mohon isi kuesioner berikut. Data Anda akan langsung terintegrasi dengan DSS Kelurahan.</p>
+                        </div>
+                        <button id="btnShareSurvey" onclick="shareSurveyLink()" class="px-5 py-2.5 bg-white text-indigo-700 border border-indigo-200 text-xs font-bold rounded-xl shadow-sm hover:shadow-md transition-all whitespace-nowrap">
+                            🔗 Salin Link Survei
+                        </button>
+                    </div>
+                    <div id="surveyFormContainer" class="space-y-6 bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm">
+                        </div>
+                    <div class="mt-6 text-right">
+                        <button onclick="submitSurveyForm()" class="px-8 py-3.5 bg-indigo-600 text-white text-sm font-black rounded-xl hover:bg-indigo-700 shadow-[0_4px_14px_rgba(79,70,229,0.3)] transition-all hover:-translate-y-0.5">
+                            Kirim Jawaban Survei 🚀
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewDSS" class="hidden fade-in space-y-8">
+            <div class="glass-panel p-6 md:p-10 rounded-[2.5rem]">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-zinc-200 pb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-zinc-900 tracking-tight">Executive DSS Dashboard</h2>
+                        <p class="text-sm text-zinc-500 mt-1 font-medium mb-3">Command Center pemantauan resiliensi komprehensif wilayah Muara Angke.</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="alert('Memproses Export PDF Data Eksekutif...')" class="px-6 py-3 bg-zinc-950 text-white text-sm font-bold rounded-xl hover:bg-zinc-800 shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all flex items-center hover:-translate-y-0.5">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Policy Brief
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <div class="bg-white border border-zinc-200 rounded-[2rem] p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
+                        <h3 class="text-xs font-black text-zinc-400 uppercase tracking-widest mb-6 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2"></span> Panel 1: Agregat Uji Kebijakan (Makro)
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-100">
+                                    <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-wide mb-1">Sikap (X1)</div>
+                                    <div id="dssAkademikSikap" class="text-2xl font-black text-zinc-900 transition-all">50%</div>
+                                </div>
+                                <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-100">
+                                    <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-wide mb-1">Norma (X2)</div>
+                                    <div id="dssAkademikNorma" class="text-2xl font-black text-zinc-900 transition-all">50%</div>
+                                </div>
+                                <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-100">
+                                    <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-wide mb-1">PBC (X3)</div>
+                                    <div id="dssAkademikPBC" class="text-2xl font-black text-zinc-900 transition-all">50%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                                    <div class="text-xs font-bold text-zinc-500 uppercase tracking-wide">Niat Adaptasi (Y1)</div>
+                                    <div id="dssAkademikNiat" class="font-black text-zinc-800 text-lg transition-all">50%</div>
+                                </div>
+                                <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
+                                    <div class="text-xs font-bold text-zinc-500 uppercase tracking-wide">Aksi Aktual (Y2)</div>
+                                    <div id="dssAkademikPerilaku" class="font-black text-zinc-800 text-lg transition-all">50%</div>
+                                </div>
+                                <div class="flex justify-between items-center bg-zinc-950 p-5 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.12)]">
+                                    <div class="text-xs font-black text-white uppercase tracking-widest">Ketahanan Sistem (Y3)</div>
+                                    <div id="dssAkademikKetahanan" class="font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 text-3xl transition-all">50%</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-6 border-t border-zinc-100">
+                                <div id="dssAkademikRekomendasi" class="space-y-2 transition-all"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/50 border border-indigo-100 rounded-[2rem] p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
+                        <h3 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-6 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span> Panel 2: Live Data Lapangan (Warga)
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="bg-white p-4 rounded-2xl border border-indigo-50 shadow-sm">
+                                    <div class="text-[10px] text-indigo-400 font-bold uppercase tracking-wide mb-1">Sikap Warga</div>
+                                    <div id="dssWargaSikap" class="text-2xl font-black text-indigo-950 transition-all">50%</div>
+                                </div>
+                                <div class="bg-white p-4 rounded-2xl border border-indigo-50 shadow-sm">
+                                    <div class="text-[10px] text-indigo-400 font-bold uppercase tracking-wide mb-1">Norma RT</div>
+                                    <div id="dssWargaNorma" class="text-2xl font-black text-indigo-950 transition-all">50%</div>
+                                </div>
+                                <div class="bg-white p-4 rounded-2xl border border-indigo-50 shadow-sm">
+                                    <div class="text-[10px] text-indigo-400 font-bold uppercase tracking-wide mb-1">Kapasitas PBC</div>
+                                    <div id="dssWargaPBC" class="text-2xl font-black text-indigo-950 transition-all">50%</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-indigo-100 shadow-sm">
+                                    <div class="text-xs font-bold text-indigo-500 uppercase tracking-wide">Kalibrasi Zona (RW)</div>
+                                    <div id="dssWargaZona" class="text-[11px] font-black text-indigo-950 bg-indigo-50 px-3 py-1 rounded-lg">Zona Tengah (1.0x)</div>
+                                </div>
+                                <div class="flex justify-between items-center bg-indigo-600 p-5 rounded-2xl shadow-[0_8px_20px_rgba(79,70,229,0.3)]">
+                                    <div class="text-xs font-black text-white uppercase tracking-widest">Skor Kesiapsiagaan</div>
+                                    <div id="dssWargaKetahanan" class="font-black text-white text-3xl tracking-tighter transition-all">50%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 pt-6 border-t border-indigo-100">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Status Kerentanan:</h4>
+                                    <div id="dssWargaStatus" class="text-[11px] font-black px-3 py-1 rounded-lg uppercase tracking-wide transition-all"></div>
+                                </div>
+                                <div id="dssWargaAnalisis" class="space-y-3 mt-2 text-[13px] leading-relaxed text-indigo-900 bg-white p-5 rounded-2xl border border-indigo-50 shadow-sm font-medium transition-all"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 mt-8">
+                    
+                    <div class="bg-white border border-zinc-200 rounded-[2rem] p-6 md:p-8 shadow-sm overflow-hidden flex flex-col">
+                        
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4">
+                            <div>
+                                <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest flex items-center mb-1">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 mr-2"></span> Panel 3: Data Survei & Analitik
+                                </h3>
+                                <p class="text-[11px] text-zinc-500 font-medium">Data deskriptif lapangan, visualisasi, dan manajemen data.</p>
+                            </div>
+                            <div class="flex gap-2 flex-wrap">
+                                <span id="dssSurveyCount" class="text-[10px] text-zinc-50 font-bold bg-zinc-900 px-3 py-2 rounded-lg uppercase flex items-center">0 Responden</span>
+                                <button onclick="exportSurveyToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm flex items-center">
+                                    📥 Export CSV
+                                </button>
+                                <button onclick="clearAllSurveyData()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm flex items-center">
+                                    🗑️ Hapus Semua Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl">
+                            <div class="text-center col-span-2 md:col-span-1">
+                                <div class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1">Sikap (X1)</div>
+                                <div id="statAvgSikap" class="text-xl font-black text-indigo-900">0%</div>
+                            </div>
+                            <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-indigo-100 pt-2 md:pt-0">
+                                <div class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1">Norma (X2)</div>
+                                <div id="statAvgNorma" class="text-xl font-black text-indigo-900">0%</div>
+                            </div>
+                            <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-indigo-100 pt-2 md:pt-0">
+                                <div class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1">PBC (X3)</div>
+                                <div id="statAvgPBC" class="text-xl font-black text-indigo-900">0%</div>
+                            </div>
+                            <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-indigo-100 pt-2 md:pt-0">
+                                <div class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1">Niat (Y1)</div>
+                                <div id="statAvgNiat" class="text-xl font-black text-purple-900">0%</div>
+                            </div>
+                            <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-indigo-100 pt-2 md:pt-0">
+                                <div class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1">Aksi (Y2)</div>
+                                <div id="statAvgAksi" class="text-xl font-black text-purple-900">0%</div>
+                            </div>
+                            <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-indigo-100 pt-2 md:pt-0">
+                                <div class="text-[9px] text-emerald-600 font-bold uppercase tracking-wider mb-1">Ketahanan (Y3)</div>
+                                <div id="statAvgKetahanan" class="text-xl font-black text-emerald-900">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex gap-2 border-b border-zinc-200 pb-2">
+                            <button id="btnViewTable" onclick="toggleSurveyView('table')" class="text-xs font-bold px-3 py-1.5 bg-zinc-800 text-white rounded shadow-sm transition-all">📋 Tampilan Tabel</button>
+                            <button id="btnViewChartBar" onclick="toggleSurveyView('bar')" class="text-xs font-bold px-3 py-1.5 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 rounded transition-all">📊 Diagram Batang</button>
+                            <button id="btnViewChartLine" onclick="toggleSurveyView('line')" class="text-xs font-bold px-3 py-1.5 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 rounded transition-all">📈 Diagram Garis</button>
+                        </div>
+
+                        <div id="surveyDataArea">
+                            <div id="surveyTableView" class="flex-grow bg-zinc-50 border border-zinc-200 rounded-xl overflow-x-auto">
+                                <table class="w-full text-left excel-table min-w-[500px]">
+                                    <thead>
+                                        <tr id="dssSurveyTableHeader">
+                                            <th class="w-24">Waktu Data</th>
+                                            <th class="w-16">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dssSurveyTableBody">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-zinc-400 py-6 italic font-medium">Belum ada data survei masuk.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div id="surveyChartArea" class="hidden relative h-[300px] w-full bg-white border border-zinc-200 rounded-xl p-4">
+                                <canvas id="surveyDataChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer id="mainFooter" class="mt-8 pt-8 border-t border-zinc-200/60 text-center pb-8">
+            <p class="text-sm text-zinc-900 font-black tracking-tight">
+                &copy; 2026 ADAPT-GRIS SYSTEM. All rights reserved.
+            </p>
+            <p class="text-xs text-zinc-400 font-medium mt-1 uppercase tracking-widest">
+                ADAPT-GRIS • Universitas Negeri Jakarta
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        let surveyQuestions = [];
+        let surveyResponses = [];
+        let surveyChartInstance = null;
+
+        function loadData() {
+            const savedQ = localStorage.getItem('adaptGrisQuestions');
+            const savedR = localStorage.getItem('adaptGrisResponses');
+            
+            if(savedQ) {
+                surveyQuestions = JSON.parse(savedQ);
+            } else {
+                surveyQuestions = [
+                    { id: 1, text: "Nama Responden", type: "text", tpbTag: "none", required: true, options: [] },
+                    { id: 2, text: "Apakah mitigasi rob sangat penting bagi Anda? (1-5)", type: "scale", tpbTag: "sikap", required: true, options: [] },
+                    { id: 3, text: "Lingkungan RT saya aktif bergotong royong menangani rob.", type: "scale", tpbTag: "norma", required: true, options: [] },
+                    { id: 4, text: "Saya siap secara material dan dana untuk peninggian mandiri.", type: "scale", tpbTag: "pbc", required: true, options: [] }
+                ];
+                saveData();
+            }
+
+            if(savedR) {
+                surveyResponses = JSON.parse(savedR);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('adaptGrisQuestions', JSON.stringify(surveyQuestions));
+            localStorage.setItem('adaptGrisResponses', JSON.stringify(surveyResponses));
+        }
+
+        function changeBgColor(color) {
+            document.body.style.backgroundColor = color;
+            document.body.style.backgroundImage = 'radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px)';
+        }
+
+        function switchTab(tab) {
+            const btnAkademik = document.getElementById('btnTabAkademik');
+            const btnWarga = document.getElementById('btnTabWarga');
+            const btnDSS = document.getElementById('btnTabDSS');
+            const btnSurvei = document.getElementById('btnTabSurvei'); 
+            
+            const viewAkademik = document.getElementById('viewAkademik');
+            const viewWarga = document.getElementById('viewWarga');
+            const viewDSS = document.getElementById('viewDSS');
+            const viewSurvei = document.getElementById('viewSurvei'); 
+
+            viewAkademik.classList.add('hidden');
+            viewWarga.classList.add('hidden');
+            viewDSS.classList.add('hidden');
+            viewSurvei.classList.add('hidden');
+
+            const defaultClass = "px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100";
+            const activeClass = "px-7 py-3 bg-zinc-950 text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-200";
+            
+            btnAkademik.className = defaultClass;
+            btnWarga.className = defaultClass;
+            btnDSS.className = defaultClass;
+            btnSurvei.className = defaultClass;
+
+            if (tab === 'akademik') {
+                btnAkademik.className = activeClass;
+                viewAkademik.classList.remove('hidden');
+            } else if (tab === 'warga') {
+                btnWarga.className = activeClass;
+                viewWarga.classList.remove('hidden');
+                hitungWarga(); 
+            } else if (tab === 'dss') {
+                btnDSS.className = activeClass;
+                viewDSS.classList.remove('hidden');
+                syncTPBWithSurvey(); 
+                updateSimulation(); 
+                hitungWarga();
+                updateDSSSurveyTable(); 
+            } else if (tab === 'survei') {
+                btnSurvei.className = activeClass;
+                viewSurvei.classList.remove('hidden');
+                renderSurveyEditor();
+            }
+        }
+
+        function toggleSurveiMode(mode) {
+            const btnEdit = document.getElementById('btnSurveiEdit');
+            const btnFill = document.getElementById('btnSurveiFill');
+            const modeEdit = document.getElementById('surveiEditMode');
+            const modeFill = document.getElementById('surveiFillMode');
+
+            if (mode === 'edit') {
+                btnEdit.className = "px-4 py-2 bg-white shadow-sm text-zinc-900 text-xs font-bold rounded-lg transition-all";
+                btnFill.className = "px-4 py-2 text-zinc-500 hover:text-zinc-900 text-xs font-bold rounded-lg transition-all";
+                modeEdit.classList.remove('hidden');
+                modeFill.classList.add('hidden');
+                document.getElementById('btnShareSurvey').classList.add('hidden'); 
+                renderSurveyEditor();
+            } else {
+                btnFill.className = "px-4 py-2 bg-white shadow-sm text-zinc-900 text-xs font-bold rounded-lg transition-all";
+                btnEdit.className = "px-4 py-2 text-zinc-500 hover:text-zinc-900 text-xs font-bold rounded-lg transition-all";
+                modeFill.classList.remove('hidden');
+                modeEdit.classList.add('hidden');
+                document.getElementById('btnShareSurvey').classList.remove('hidden'); 
+                renderSurveyForm();
+            }
+        }
+
+        function shareSurveyLink() {
+            const shareUrl = window.location.href.split('?')[0] + '?mode=respondent';
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert("Tautan kuesioner berhasil disalin ke clipboard:\n" + shareUrl + "\n\nResponden yang membuka link ini hanya akan melihat instrumen survei.");
+                }).catch(err => {
+                    prompt("Salin tautan berikut untuk membagikan instrumen (Hanya Mode Responden):", shareUrl);
+                });
+            } else {
+                prompt("Salin tautan berikut untuk membagikan instrumen (Hanya Mode Responden):", shareUrl);
+            }
+        }
+
+        function renderSurveyEditor() {
+            const container = document.getElementById('surveyQuestionsContainer');
+            container.innerHTML = '';
+            
+            surveyQuestions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = "bg-white p-5 rounded-2xl border border-zinc-200 shadow-sm flex flex-col gap-3";
+                
+                let typeIcon = '📝 Teks Singkat';
+                if(q.type === 'scale') typeIcon = '📊 Likert 1-5';
+                else if(q.type === 'guttman') typeIcon = '✅ Guttman';
+                else if(q.type === 'rating') typeIcon = '⭐ Rating 1-10';
+                else if(q.type === 'semantic') typeIcon = '↔️ Semantic Diff';
+                else if(q.type === 'custom_radio') typeIcon = '🔘 Pilihan Ganda';
+                else if(q.type === 'custom_checkbox') typeIcon = '☑️ Checkbox';
+                else if(q.type === 'text_block') typeIcon = '📄 Blok Instruksi';
+                
+                let optionsInput = "";
+                if(q.type === 'custom_radio' || q.type === 'custom_checkbox') {
+                    optionsInput = `<input type="text" class="w-full mt-2 text-xs p-2 border border-zinc-200 rounded-lg focus:border-indigo-500 outline-none" value="${(q.options||[]).join(', ')}" onchange="updateCustomOptions(${q.id}, this.value)" placeholder="Ketik opsi dipisahkan koma (cth: Pria, Wanita, Anak)">`;
+                }
+
+                let mappingHTML = "";
+                if(q.type !== 'text_block') {
+                    mappingHTML = `
+                        <div class="flex flex-wrap gap-4 mt-3 bg-zinc-50 p-2 rounded-lg border border-zinc-100">
+                            <label class="flex items-center gap-2 text-xs font-bold text-zinc-600">
+                                🔗 Mapping Model TPB:
+                                <select onchange="updateQuestionProps(${q.id}, 'tpbTag', this.value)" class="p-1 border border-zinc-300 rounded outline-none focus:ring-1 focus:ring-indigo-500">
+                                    <option value="none">Tidak Ditag</option>
+                                    <optgroup label="Parameter Eksogen (X)">
+                                        <option value="sikap" ${q.tpbTag==='sikap'?'selected':''}>Sikap Warga (X1)</option>
+                                        <option value="norma" ${q.tpbTag==='norma'?'selected':''}>Norma RT/Sosial (X2)</option>
+                                        <option value="pbc" ${q.tpbTag==='pbc'?'selected':''}>PBC/Kontrol (X3)</option>
+                                    </optgroup>
+                                    <optgroup label="Proyeksi Endogen (Y)">
+                                        <option value="niat" ${q.tpbTag==='niat'?'selected':''}>Niat/Intention (Y1)</option>
+                                        <option value="aksi" ${q.tpbTag==='aksi'?'selected':''}>Aksi/Behavioral (Y2)</option>
+                                        <option value="ketahanan" ${q.tpbTag==='ketahanan'?'selected':''}>Ketahanan/Resilience (Y3)</option>
+                                    </optgroup>
+                                </select>
+                            </label>
+                            <label class="flex items-center gap-2 text-xs font-bold text-zinc-600 cursor-pointer">
+                                <input type="checkbox" onchange="updateQuestionProps(${q.id}, 'required', this.checked)" ${q.required?'checked':''} class="w-3.5 h-3.5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500">
+                                Wajib Diisi (Required)
+                            </label>
+                        </div>
+                    `;
+                }
+
+                let textInputHTML = q.type === 'text_block' 
+                    ? `<textarea class="w-full border border-zinc-200 p-2 rounded-lg focus:border-indigo-500 outline-none text-sm font-medium text-zinc-800 mb-2" onchange="updateQuestionProps(${q.id}, 'text', this.value)" rows="3" placeholder="Tulis instruksi atau studi kasus di sini...">${q.text}</textarea>`
+                    : `<input type="text" class="w-full border-b-2 border-zinc-200 focus:border-indigo-500 outline-none text-sm font-bold text-zinc-800 pb-1 mb-1 bg-transparent transition-colors" value="${q.text}" onchange="updateQuestionProps(${q.id}, 'text', this.value)" placeholder="Tulis pertanyaan di sini...">`;
+
+                qDiv.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded">${typeIcon} • Item ${index + 1}</div>
+                        <button onclick="removeSurveyQuestion(${q.id})" class="text-rose-500 hover:text-white hover:bg-rose-500 p-1.5 rounded-lg transition-colors" title="Hapus Pertanyaan">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    <div class="flex-grow">
+                        ${textInputHTML}
+                        ${optionsInput}
+                        ${mappingHTML}
+                    </div>
+                `;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateQuestionProps(id, prop, value) {
+            const q = surveyQuestions.find(q => q.id === id);
+            if (q) { q[prop] = value; saveData(); }
+        }
+
+        function updateCustomOptions(id, commaStr) {
+            const q = surveyQuestions.find(q => q.id === id);
+            if (q) { q.options = commaStr.split(',').map(s => s.trim()).filter(s => s !== ""); saveData(); }
+        }
+
+        function addSurveyQuestion(type) {
+            let defaultText = "Pertanyaan/Pernyataan Baru";
+            if (type === 'text_block') defaultText = "Blok Instruksi atau Deskripsi Studi Kasus. Tidak memerlukan input jawaban responden.";
+            
+            surveyQuestions.push({
+                id: Date.now(),
+                text: defaultText,
+                type: type,
+                tpbTag: 'none',
+                required: false,
+                options: (type === 'custom_radio' || type === 'custom_checkbox') ? ['Opsi 1', 'Opsi 2'] : []
+            });
+            saveData();
+            renderSurveyEditor();
+        }
+
+        function removeSurveyQuestion(id) {
+            surveyQuestions = surveyQuestions.filter(q => q.id !== id);
+            saveData();
+            renderSurveyEditor();
+        }
+
+        function renderSurveyForm() {
+            const container = document.getElementById('surveyFormContainer');
+            container.innerHTML = '';
+            
+            if(surveyQuestions.length === 0) {
+                container.innerHTML = '<p class="text-zinc-500 text-sm font-medium text-center">Belum ada instrumen pertanyaan yang dibuat.</p>';
+                return;
+            }
+
+            surveyQuestions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.id = `q_container_${q.id}`;
+                qDiv.className = "border border-transparent border-b-zinc-100 pb-6 pt-2 px-2 rounded-xl transition-colors last:border-b-transparent";
+                
+                if(q.type === 'text_block') {
+                    qDiv.innerHTML = `<div class="bg-indigo-50/50 border-l-4 border-indigo-500 p-4 rounded-r-xl text-sm text-zinc-700 leading-relaxed font-medium whitespace-pre-wrap">${q.text}</div>`;
+                    container.appendChild(qDiv);
+                    return;
+                }
+
+                let inputHTML = '';
+                let reqMark = q.required ? '<span class="text-rose-500 ml-1" title="Wajib Diisi">*</span>' : '';
+
+                if (q.type === 'text') {
+                    inputHTML = `<input type="text" id="answer_${q.id}" class="w-full mt-3 p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors" placeholder="Ketik jawaban Anda di sini">`;
+                } else if (q.type === 'custom_radio') {
+                    inputHTML = `<div class="mt-3 flex flex-col gap-2">`;
+                    (q.options||[]).forEach(opt => {
+                        inputHTML += `<label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-zinc-50 transition-colors"><input type="radio" name="answer_${q.id}" value="${opt}" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"><span class="text-sm font-medium text-zinc-700">${opt}</span></label>`;
+                    });
+                    inputHTML += `</div>`;
+                } else if (q.type === 'custom_checkbox') {
+                    inputHTML = `<div class="mt-3 flex flex-col gap-2">`;
+                    (q.options||[]).forEach(opt => {
+                        inputHTML += `<label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-zinc-50 transition-colors"><input type="checkbox" name="answer_${q.id}" value="${opt}" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 rounded"><span class="text-sm font-medium text-zinc-700">${opt}</span></label>`;
+                    });
+                    inputHTML += `</div>`;
+                } else if (q.type === 'scale') { 
+                    inputHTML = `<div class="mt-4 flex gap-2 sm:gap-4 justify-between max-w-md">`;
+                    for(let i=1; i<=5; i++) inputHTML += `<label class="flex flex-col items-center gap-2 cursor-pointer"><input type="radio" name="answer_${q.id}" value="${i}" class="w-4 h-4 text-indigo-600"><span class="text-xs font-bold text-zinc-600 bg-zinc-50 px-2 py-1 rounded border border-zinc-100">${i}</span></label>`;
+                    inputHTML += `</div><div class="flex justify-between text-[10px] text-zinc-400 font-bold uppercase mt-2 max-w-md px-1"><span>Sangat Tidak Setuju</span><span>Sangat Setuju</span></div>`;
+                } else if (q.type === 'guttman') { 
+                    inputHTML = `
+                        <div class="mt-4 flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer bg-zinc-50 px-5 py-2.5 rounded-xl border border-zinc-200 hover:bg-zinc-100 hover:border-indigo-300 transition-all"><input type="radio" name="answer_${q.id}" value="Ya" class="w-4 h-4 text-indigo-600"><span class="text-sm font-bold text-zinc-700">Ya</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-zinc-50 px-5 py-2.5 rounded-xl border border-zinc-200 hover:bg-zinc-100 hover:border-indigo-300 transition-all"><input type="radio" name="answer_${q.id}" value="Tidak" class="w-4 h-4 text-indigo-600"><span class="text-sm font-bold text-zinc-700">Tidak</span></label>
+                        </div>
+                    `;
+                } else if (q.type === 'rating') { 
+                    inputHTML = `<div class="mt-4 flex gap-1 justify-between max-w-lg">`;
+                    for(let i=1; i<=10; i++) inputHTML += `<label class="flex flex-col items-center gap-1 cursor-pointer hover:scale-110 transition-transform"><input type="radio" name="answer_${q.id}" value="${i}" class="w-3.5 h-3.5 text-indigo-600"><span class="text-[10px] font-bold text-zinc-500">${i}</span></label>`;
+                    inputHTML += `</div><div class="flex justify-between text-[9px] text-zinc-400 font-bold uppercase mt-1 max-w-lg"><span>Sangat Buruk</span><span>Sangat Baik</span></div>`;
+                } else if (q.type === 'semantic') { 
+                    inputHTML = `<div class="mt-4 flex gap-2 sm:gap-4 justify-between max-w-md bg-zinc-50 p-4 rounded-2xl border border-zinc-100">`;
+                    for(let i=1; i<=7; i++) inputHTML += `<label class="flex flex-col items-center cursor-pointer"><input type="radio" name="answer_${q.id}" value="${i}" class="w-4 h-4 text-indigo-600"><span class="text-xs font-bold text-zinc-400 mt-1">${i}</span></label>`;
+                    inputHTML += `</div><div class="flex justify-between text-[10px] text-zinc-500 font-bold uppercase mt-2 max-w-md px-1"><span>Negatif (Kiri)</span><span>Positif (Kanan)</span></div>`;
+                }
+
+                qDiv.innerHTML = `<label class="block text-zinc-800 font-bold text-[15px] leading-relaxed">${index + 1}. ${q.text}${reqMark}</label>${inputHTML}`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function submitSurveyForm() {
+            if(surveyQuestions.length === 0) return;
+
+            let currentResponse = {
+                id: Date.now(), 
+                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit', second:'2-digit' }),
+                answers: {}
+            };
+            
+            let isValid = true;
+
+            surveyQuestions.forEach(q => {
+                if(q.type === 'text_block') return;
+                
+                let val = "-";
+                if (q.type === 'text') {
+                    val = document.getElementById(`answer_${q.id}`).value.trim();
+                } else if (q.type === 'custom_checkbox') {
+                    const cbx = document.querySelectorAll(`input[name="answer_${q.id}"]:checked`);
+                    val = Array.from(cbx).map(c => c.value);
+                    if(val.length === 0) val = ""; 
+                } else {
+                    const radios = document.getElementsByName(`answer_${q.id}`);
+                    for(let r of radios) { if(r.checked) val = r.value; }
+                }
+
+                if(q.required && (val === "" || val === "-")) {
+                    isValid = false;
+                    document.getElementById(`q_container_${q.id}`).classList.add('border-rose-300', 'bg-rose-50');
+                } else {
+                    document.getElementById(`q_container_${q.id}`).classList.remove('border-rose-300', 'bg-rose-50');
+                }
+
+                currentResponse.answers[q.id] = val || "-";
+            });
+
+            if(!isValid) {
+                alert("Mohon isi semua pertanyaan yang bertanda Wajib Diisi (*).");
+                return;
+            }
+
+            surveyResponses.push(currentResponse);
+            saveData();
+            alert("Terima kasih! Data survei Anda telah berhasil disimpan dan disinkronisasi dengan Engine DSS.");
+            
+            renderSurveyForm();
+            updateDSSSurveyTable();
+            syncTPBWithSurvey();
+        }
+
+        function deleteSurveyResponse(responseId) {
+            if(confirm("Anda yakin ingin menghapus data responden ini?")) {
+                surveyResponses = surveyResponses.filter(res => res.id !== responseId);
+                saveData();
+                updateDSSSurveyTable();
+                syncTPBWithSurvey();
+            }
+        }
+
+        function clearAllSurveyData() {
+            if(surveyResponses.length === 0) {
+                alert("Tidak ada data untuk dihapus.");
+                return;
+            }
+            if(confirm("PERINGATAN! Anda yakin ingin menghapus SELURUH data survei yang ada? Tindakan ini tidak dapat dibatalkan.")) {
+                surveyResponses = [];
+                saveData();
+                updateDSSSurveyTable();
+                syncTPBWithSurvey();
+                alert("Seluruh data survei berhasil dihapus.");
+            }
+        }
+
+        function syncTPBWithSurvey() {
+            let sums = { sikap: 0, norma: 0, pbc: 0, niat: 0, aksi: 0, ketahanan: 0 };
+            let counts = { sikap: 0, norma: 0, pbc: 0, niat: 0, aksi: 0, ketahanan: 0 };
+
+            if(surveyResponses.length > 0) {
+                surveyResponses.forEach(res => {
+                    surveyQuestions.forEach(q => {
+                        if(q.tpbTag && q.tpbTag !== 'none' && res.answers[q.id] && res.answers[q.id] !== "-") {
+                            let val = parseFloat(res.answers[q.id]);
+                            let score = NaN;
+                            if(q.type === 'scale') score = ((val-1)/4) * 100;
+                            else if(q.type === 'rating') score = ((val-1)/9) * 100;
+                            else if(q.type === 'semantic') score = ((val-1)/6) * 100;
+                            else if(q.type === 'guttman') score = res.answers[q.id] === 'Ya' ? 100 : 0;
+                            
+                            if(!isNaN(score) && sums[q.tpbTag] !== undefined) {
+                                sums[q.tpbTag] += score;
+                                counts[q.tpbTag]++;
+                            }
+                        }
+                    });
+                });
+            }
+
+            const updateStatCard = (tag, elementId) => {
+                let el = document.getElementById(elementId);
+                if (counts[tag] > 0) {
+                    let avg = Math.round(sums[tag]/counts[tag]);
+                    el.innerText = avg + '%';
+                    return avg;
+                } else {
+                    el.innerText = '0%';
+                    return null;
+                }
+            };
+
+            let avgSikap = updateStatCard('sikap', 'statAvgSikap');
+            let avgNorma = updateStatCard('norma', 'statAvgNorma');
+            let avgPBC = updateStatCard('pbc', 'statAvgPBC');
+            
+            updateStatCard('niat', 'statAvgNiat');
+            updateStatCard('aksi', 'statAvgAksi');
+            updateStatCard('ketahanan', 'statAvgKetahanan');
+
+            if (avgSikap !== null) document.getElementById('inputSikap').value = avgSikap;
+            if (avgNorma !== null) document.getElementById('inputNorma').value = avgNorma;
+            if (avgPBC !== null) document.getElementById('inputPBC').value = avgPBC;
+
+            renderSurveyChart(sums, counts);
+        }
+
+        function toggleSurveyView(viewType) {
+            const tableArea = document.getElementById('surveyTableView');
+            const chartArea = document.getElementById('surveyChartArea');
+            const btnTable = document.getElementById('btnViewTable');
+            const btnBar = document.getElementById('btnViewChartBar');
+            const btnLine = document.getElementById('btnViewChartLine');
+
+            btnTable.className = "text-xs font-bold px-3 py-1.5 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 rounded transition-all";
+            btnBar.className = "text-xs font-bold px-3 py-1.5 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 rounded transition-all";
+            btnLine.className = "text-xs font-bold px-3 py-1.5 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 rounded transition-all";
+            
+            tableArea.classList.add('hidden');
+            chartArea.classList.add('hidden');
+
+            if(viewType === 'table') {
+                btnTable.className = "text-xs font-bold px-3 py-1.5 bg-zinc-800 text-white rounded shadow-sm transition-all";
+                tableArea.classList.remove('hidden');
+            } else {
+                if(viewType === 'bar') btnBar.className = "text-xs font-bold px-3 py-1.5 bg-zinc-800 text-white rounded shadow-sm transition-all";
+                if(viewType === 'line') btnLine.className = "text-xs font-bold px-3 py-1.5 bg-zinc-800 text-white rounded shadow-sm transition-all";
+                chartArea.classList.remove('hidden');
+                
+                syncTPBWithSurvey();
+                if(surveyChartInstance) {
+                    surveyChartInstance.config.type = viewType;
+                    surveyChartInstance.update();
+                }
+            }
+        }
+
+        function renderSurveyChart(sums, counts) {
+            const ctx = document.getElementById('surveyDataChart').getContext('2d');
+            
+            let dataAverages = [
+                counts.sikap > 0 ? Math.round(sums.sikap/counts.sikap) : 0,
+                counts.norma > 0 ? Math.round(sums.norma/counts.norma) : 0,
+                counts.pbc > 0 ? Math.round(sums.pbc/counts.pbc) : 0,
+                counts.niat > 0 ? Math.round(sums.niat/counts.niat) : 0,
+                counts.aksi > 0 ? Math.round(sums.aksi/counts.aksi) : 0,
+                counts.ketahanan > 0 ? Math.round(sums.ketahanan/counts.ketahanan) : 0
+            ];
+
+            if(surveyChartInstance) {
+                surveyChartInstance.data.datasets[0].data = dataAverages;
+                surveyChartInstance.update();
+                return;
+            }
+
+            surveyChartInstance = new Chart(ctx, {
+                type: 'bar', 
+                data: {
+                    labels: ['Sikap (X1)', 'Norma (X2)', 'PBC (X3)', 'Niat (Y1)', 'Aksi (Y2)', 'Ketahanan (Y3)'],
+                    datasets: [{
+                        label: 'Rata-rata Skor (%)',
+                        data: dataAverages,
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)', 'rgba(79, 70, 229, 0.7)', 'rgba(79, 70, 229, 0.7)',
+                            'rgba(168, 85, 247, 0.7)', 'rgba(168, 85, 247, 0.7)', 'rgba(16, 185, 129, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(79, 70, 229)', 'rgb(79, 70, 229)', 'rgb(79, 70, 229)',
+                            'rgb(168, 85, 247)', 'rgb(168, 85, 247)', 'rgb(16, 185, 129)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 4,
+                        tension: 0.3, 
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { 
+                        y: { max: 100, min: 0, grid: { color: '#f4f4f5' }, ticks: { font: { family: 'Inter', weight: 'bold' } } },
+                        x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: 'bold' } } }
+                    },
+                    plugins: { legend: { display: false } },
+                    animation: { duration: 500 }
+                }
+            });
+        }
+
+
+        function exportSurveyToCSV() {
+            if(surveyResponses.length === 0) { alert('Tidak ada data untuk diexport.'); return; }
+            
+            const answeringQuestions = surveyQuestions.filter(q => q.type !== 'text_block');
+            
+            let csv = 'ID_Responden,Waktu_Isi,';
+            csv += answeringQuestions.map(q => `"${q.text.replace(/"/g, '""')}"`).join(',') + '\n';
+            
+            surveyResponses.forEach(res => {
+                let row = `"${res.id}","${res.timestamp}",`;
+                row += answeringQuestions.map(q => {
+                    let ans = res.answers[q.id];
+                    if(Array.isArray(ans)) ans = ans.join(';'); 
+                    return `"${(ans||'-').toString().replace(/"/g, '""')}"`;
+                }).join(',');
+                csv += row + '\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Raw_Data_Survei_ADAPT_GRIS.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function updateDSSSurveyTable() {
+            const headerRow = document.getElementById('dssSurveyTableHeader');
+            const tableBody = document.getElementById('dssSurveyTableBody');
+            const counter = document.getElementById('dssSurveyCount');
+
+            counter.innerText = `${surveyResponses.length} Responden`;
+            if (surveyQuestions.length === 0) return;
+
+            const answeringQuestions = surveyQuestions.filter(q => q.type !== 'text_block');
+
+            let headerHTML = `<th class="w-24">Waktu</th><th class="w-16 text-center">Aksi</th>`;
+            answeringQuestions.forEach((q, i) => {
+                let shortText = q.text.length > 25 ? q.text.substring(0, 25) + "..." : q.text;
+                let tagInfo = q.tpbTag !== 'none' ? `<span class="block text-[8px] text-indigo-400 mt-0.5 font-black uppercase">(${q.tpbTag})</span>` : '';
+                headerHTML += `<th class="min-w-[120px] whitespace-nowrap" title="${q.text}">Q${i+1}: ${shortText}${tagInfo}</th>`;
+            });
+            headerRow.innerHTML = headerHTML;
+
+            tableBody.innerHTML = '';
+            if (surveyResponses.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${answeringQuestions.length + 2}" class="text-center text-zinc-400 py-6 italic font-medium">Belum ada data survei masuk.</td></tr>`;
+                return;
+            }
+
+            [...surveyResponses].reverse().forEach(res => {
+                let rowHTML = `
+                    <td class="whitespace-nowrap font-mono text-[10px]">${res.timestamp}</td>
+                    <td class="text-center">
+                        <button onclick="deleteSurveyResponse(${res.id})" class="text-rose-500 hover:bg-rose-100 p-1 rounded transition-colors" title="Hapus Data Ini">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                answeringQuestions.forEach(q => {
+                    let ans = res.answers[q.id];
+                    if(Array.isArray(ans)) ans = ans.join(', ');
+                    
+                    if(ans !== "-" && ans !== "") {
+                        if(q.type === 'scale') { 
+                            if(parseInt(ans) <= 2) ans = `<span class="text-rose-600 font-bold">${ans}</span>`;
+                            else if(parseInt(ans) >= 4) ans = `<span class="text-emerald-600 font-bold">${ans}</span>`;
+                            else ans = `<span class="text-amber-600 font-bold">${ans}</span>`;
+                        } else if (q.type === 'guttman') { 
+                            if(ans === 'Ya') ans = `<span class="text-emerald-600 font-bold">${ans}</span>`;
+                            else ans = `<span class="text-rose-600 font-bold">${ans}</span>`;
+                        } else if (q.type === 'rating') { 
+                            if(parseInt(ans) <= 4) ans = `<span class="text-rose-600 font-bold">${ans}</span>`;
+                            else if(parseInt(ans) >= 8) ans = `<span class="text-emerald-600 font-bold">${ans}</span>`;
+                            else ans = `<span class="text-amber-600 font-bold">${ans}</span>`;
+                        } else if (q.type === 'semantic') { 
+                            if(parseInt(ans) <= 3) ans = `<span class="text-rose-600 font-bold">${ans}</span>`;
+                            else if(parseInt(ans) >= 5) ans = `<span class="text-emerald-600 font-bold">${ans}</span>`;
+                            else ans = `<span class="text-amber-600 font-bold">${ans}</span>`;
+                        }
+                    }
+                    rowHTML += `<td class="whitespace-nowrap truncate max-w-[200px]" title="${Array.isArray(res.answers[q.id])?res.answers[q.id].join(','):res.answers[q.id]}">${ans}</td>`;
+                });
+                const tr = document.createElement('tr');
+                tr.innerHTML = rowHTML;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        const ctx = document.getElementById('tpbChart').getContext('2d');
+        const tpbChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Niat (Y1)', 'Aksi (Y2)', 'Ketahanan (Y3)'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['rgba(99, 102, 241, 0.95)', 'rgba(168, 85, 247, 0.95)', 'rgba(16, 185, 129, 0.95)'],
+                    borderRadius: 8, borderSkipped: false, barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: { 
+                    y: { max: 100, grid: { borderDash: [4, 4], color: '#f4f4f5' }, ticks: { font: { family: 'Inter', weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: 'bold' }, color: '#52525b' } }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 400, easing: 'easeOutQuart' }
+            }
+        });
+
+        function kalkulasiMatematika(x1, x2, x3) {
+            if (x1 === 0 && x2 === 0 && x3 === 0) return { niat: 0, perilaku: 0, ketahanan: 0, gof: 0 };
+
+            const path_X1_Y1 = 0.35, path_X2_Y1 = 0.25, path_X3_Y1 = 0.40; 
+            const path_Y1_Y2 = 0.55, path_X3_Y2 = 0.45; 
+            const path_Y2_Y3 = 1.00; 
+
+            let y1 = (path_X1_Y1 * x1) + (path_X2_Y1 * x2) + (path_X3_Y1 * x3);
+            let y2 = (path_Y1_Y2 * y1) + (path_X3_Y2 * x3);
+            let y3 = (path_Y2_Y3 * y2);
+
+            let avg_R2 = ((y1/100) + (y2/100)) / 2;
+            let gofValue = Math.sqrt(0.65 * avg_R2);
+
+            return { niat: Math.min(y1, 100), perilaku: Math.min(y2, 100), ketahanan: Math.min(y3, 100), gof: gofValue };
+        }
+
+        function updateSimulation() {
+            const sikap = parseFloat(document.getElementById('inputSikap').value);
+            const norma = parseFloat(document.getElementById('inputNorma').value);
+            const pbc   = parseFloat(document.getElementById('inputPBC').value);
+
+            document.getElementById('valSikap').innerText = sikap + '%';
+            document.getElementById('valNorma').innerText = norma + '%';
+            document.getElementById('valPBC').innerText = pbc + '%';
+
+            const hasil = kalkulasiMatematika(sikap, norma, pbc);
+
+            tpbChart.data.datasets[0].data = [hasil.niat, hasil.perilaku, hasil.ketahanan];
+            tpbChart.update();
+
+            const nodes = [
+                { id: 'nodeSikap', val: sikap }, { id: 'nodeNorma', val: norma }, { id: 'nodePBC', val: pbc },
+                { id: 'nodeNiat', val: hasil.niat }, { id: 'nodePerilaku', val: hasil.perilaku }, { id: 'nodeKetahanan', val: hasil.ketahanan }
+            ];
+
+            nodes.forEach(n => {
+                const el = document.getElementById(n.id);
+                if(el) {
+                    el.querySelector('.val-node').innerText = (n.val % 1 === 0 ? n.val : n.val.toFixed(1)) + '%';
+                    el.classList.remove('border-zinc-200', 'border-rose-400', 'border-amber-400', 'border-emerald-400', 'bg-zinc-50', 'bg-rose-50', 'bg-amber-50', 'bg-emerald-50');
+                    if (n.val >= 75) el.classList.add('border-emerald-400', 'bg-emerald-50');
+                    else if (n.val <= 40) el.classList.add('border-rose-400', 'bg-rose-50');
+                    else el.classList.add('border-amber-400', 'bg-amber-50');
+                }
+            });
+
+            const gofDiv = document.getElementById('gofDisplay');
+            if(gofDiv) {
+                let gofKategori = "INVALID FIT";
+                let gofColor = "text-rose-600 bg-rose-50 border-rose-200";
+                if (hasil.gof >= 0.36) { gofKategori = "LARGE FIT (SANGAT VALID)"; gofColor = "text-emerald-700 bg-emerald-50 border-emerald-200"; }
+                else if (hasil.gof >= 0.25) { gofKategori = "MEDIUM FIT (VALID)"; gofColor = "text-indigo-700 bg-indigo-50 border-indigo-200"; }
+                else if (hasil.gof > 0) { gofKategori = "SMALL FIT (MARGINAL)"; gofColor = "text-amber-700 bg-amber-50 border-amber-200"; }
+                
+                gofDiv.className = `font-black text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-xl border ${gofColor}`;
+                gofDiv.innerHTML = `GoF: ${hasil.gof.toFixed(3)} - ${gofKategori}`;
+            }
+
+            generateAnalysis(sikap, norma, pbc, hasil.niat, hasil.perilaku, hasil.ketahanan);
+
+            document.getElementById('dssAkademikSikap').innerText = sikap + '%';
+            document.getElementById('dssAkademikNorma').innerText = norma + '%';
+            document.getElementById('dssAkademikPBC').innerText = pbc + '%';
+            document.getElementById('dssAkademikNiat').innerText = hasil.niat.toFixed(1) + '%';
+            document.getElementById('dssAkademikPerilaku').innerText = hasil.perilaku.toFixed(1) + '%';
+            document.getElementById('dssAkademikKetahanan').innerText = hasil.ketahanan.toFixed(1) + '%';
+
+            const dssRek = document.getElementById('dssAkademikRekomendasi');
+            let dssAkademikHTML = "";
+            if (hasil.ketahanan >= 80) {
+                dssAkademikHTML = `<div class="text-[13px] text-emerald-900 leading-relaxed bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 space-y-2"><p><span class="font-black tracking-wide uppercase text-[10px] text-emerald-600 block mb-1">Diagnosis Sistemik</span> Sistem berada pada ekuilibrium <strong>Tangguh Bencana</strong>. Variabel kognitif, sosial, dan infrastruktur beroperasi secara sinergis (Model Fit Maksimal).</p><div class="h-px w-full bg-emerald-200/50 my-2"></div><p><span class="font-black tracking-wide uppercase text-[10px] text-emerald-600 block mb-1">Rekomendasi Eksekutif</span> Fokuskan APBD pada alokasi pemeliharaan rutin tanggul (preventive maintenance) dan pelestarian budaya gotong-royong yang sudah terbentuk.</p></div>`;
+            } else if (sikap <= 40 && norma <= 50 && pbc >= 75) {
+                dssAkademikHTML = `<div class="text-[13px] text-rose-900 leading-relaxed bg-rose-50/80 p-4 rounded-2xl border border-rose-200 space-y-2"><p><span class="font-black tracking-wide uppercase text-[10px] text-rose-600 block mb-1">Diagnosis Struktural</span> Terjadi fenomena <strong>Moral Hazard</strong>. Ketersediaan infrastruktur makro/PBC yang tinggi justru mematikan kesadaran dan kohesi sosial warga.</p><div class="h-px w-full bg-rose-200/50 my-2"></div><p><span class="font-black tracking-wide uppercase text-[10px] text-rose-600 block mb-1">Rekomendasi Eksekutif</span> Hentikan sementara ekspansi beton. Lakukan <em>budget-shifting</em> besar-besaran untuk kampanye edukasi radikal (mitigasi non-struktural) agar insting mitigasi warga pulih.</p></div>`;
+            } else if (hasil.niat > 70 && pbc < 50) {
+                dssAkademikHTML = `<div class="text-[13px] text-amber-900 leading-relaxed bg-amber-50/80 p-4 rounded-2xl border border-amber-200 space-y-2"><p><span class="font-black tracking-wide uppercase text-[10px] text-amber-600 block mb-1">Diagnosis Struktural</span> Terdeteksi adanya <strong>Intention-Behavior Gap</strong>. Tingginya kesadaran/niat gagal menjadi aksi mitigasi empiris akibat kemiskinan ekstrem atau akses material yang diblokade.</p><div class="h-px w-full bg-amber-200/50 my-2"></div><p><span class="font-black tracking-wide uppercase text-[10px] text-amber-600 block mb-1">Rekomendasi Eksekutif</span> Eksekusi segera program <em>Direct Material Subsidy</em>. Sosialisasi lebih lanjut tidak akan efektif tanpa injeksi kapital ke tingkat mikro.</p></div>`;
+            } else {
+                dssAkademikHTML = `<div class="text-[13px] text-indigo-900 leading-relaxed bg-indigo-50/80 p-4 rounded-2xl border border-indigo-200 space-y-2"><p><span class="font-black tracking-wide uppercase text-[10px] text-indigo-600 block mb-1">Diagnosis Sistemik</span> Komunitas berada pada kondisi <strong>Ekuilibrium Rentan</strong>. Transmisi perilaku adaptif tidak konsisten.</p><div class="h-px w-full bg-indigo-200/50 my-2"></div><p><span class="font-black tracking-wide uppercase text-[10px] text-indigo-600 block mb-1">Rekomendasi Eksekutif</span> Terapkan strategi kebijakan Hibrida (Socio-Technical). Pemerintah perlu memadukan insentif fisik komunitas dengan aktivasi tokoh lokal.</p></div>`;
+            }
+            dssRek.innerHTML = dssAkademikHTML;
+        }
+
+        function applyScenario(sikap, norma, pbc) {
+            document.getElementById('inputSikap').value = sikap; document.getElementById('inputNorma').value = norma; document.getElementById('inputPBC').value = pbc;
+            updateSimulation();
+        }
+
+        function resetSimulation() { applyScenario(50, 50, 50); }
+
+        function generateAnalysis(sikap, norma, pbc, niat, perilaku, ketahanan) {
+            const div = document.getElementById('analisisText'); let narasi = [];
+            if (sikap === 0 && norma === 0 && pbc === 0) {
+                narasi.push(`<div class="p-5 bg-rose-50 rounded-2xl border border-rose-200 shadow-sm mb-4"><p class="text-rose-900 text-justify text-[13px] leading-relaxed"><strong class="font-black">🚨 Kegagalan Sistem Total (Systemic Collapse):</strong> Seluruh determinan eksogen kognitif (Sikap, Norma) dan material (PBC) berada pada titik terendah (0%). Secara kausal, ketiadaan stimulus ini mematikan seluruh fungsi adaptasi.</p></div>`);
+            } else {
+                if (sikap <= 40 && norma <= 50 && pbc >= 75) narasi.push(`<div class="p-5 bg-rose-50 rounded-2xl border border-rose-200 shadow-sm mb-4"><p class="text-rose-900 text-justify text-[13px] leading-relaxed"><strong class="font-black text-rose-700">🚨 Paradoks Mitigasi (Efek Moral Hazard) Terdeteksi:</strong> Intervensi infrastruktur fisik / PBC terdeteksi sangat tinggi (${pbc}%), namun hal ini secara kausal justru mendestruksi kewaspadaan rasional individu (Sikap: ${sikap}%) dan melemahkan kohesi sosial komunal (Norma: ${norma}%). Warga mengalami <em>false sense of security</em>.</p></div>`);
+                else if (sikap >= 75 && norma >= 75 && pbc >= 75) narasi.push(`<div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-200 shadow-sm mb-4"><p class="text-emerald-900 text-justify text-[13px] leading-relaxed"><strong class="font-black text-emerald-700">✨ Sinergi Socio-Technical (Kondisi Ideal):</strong> Seluruh determinan kognitif, sosial, dan struktural terkalibrasi secara maksimal. Secara kausal, tingginya modal sosial dan rasionalitas individu beresonansi dengan ketersediaan infrastruktur/dana yang memadai.</p></div>`);
+                
+                narasi.push(`<div class="mb-6"><h3 class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 pb-2 border-b border-zinc-200">Dinamika Kognitif & Transmisi Struktural</h3>`);
+                if (niat < 50) narasi.push(`<p class="text-zinc-600 text-justify text-[13px] mb-3 leading-relaxed"><strong class="font-black text-zinc-900">Defisit Prakondisi Kognitif:</strong> Probabilitas intensi mitigasi tercatat rendah (${niat.toFixed(1)}%). Secara kausalitas, hal ini menunjukkan kegagalan pada fase prakondisi.</p>`);
+                else if (norma > sikap && (norma - sikap) > 15) narasi.push(`<p class="text-zinc-600 text-justify text-[13px] mb-3 leading-relaxed"><strong class="font-black text-zinc-900">Dominasi Tekanan Sosial (Subjective Norms):</strong> Intensi mitigasi (${niat.toFixed(1)}%) secara kausal didikte kuat oleh ekspektasi lingkungan sosial (Norma: ${norma}%).</p>`);
+                else if (sikap > norma && (sikap - norma) > 15) narasi.push(`<p class="text-zinc-600 text-justify text-[13px] mb-3 leading-relaxed"><strong class="font-black text-zinc-900">Rasionalitas Kalkulatif Mandiri:</strong> Intensi warga (${niat.toFixed(1)}%) terakselerasi kuat oleh determinan Sikap personal (${sikap}%).</p>`);
+                else narasi.push(`<p class="text-zinc-600 text-justify text-[13px] mb-3 leading-relaxed"><strong class="font-black text-zinc-900">Ekuilibrium Kognitif:</strong> Pembentukan niat mitigasi (${niat.toFixed(1)}%) didorong secara proporsional oleh rasionalitas personal (Sikap) dan ekspektasi sosial (Norma).</p>`);
+
+                const gap = niat - perilaku;
+                if (gap > 15 && pbc < 50) narasi.push(`<div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 mb-2"><p class="text-amber-900 text-justify text-[13px] leading-relaxed"><strong class="font-black">Intention-Behavior Gap (Kesenjangan Struktural):</strong> Terdapat divergensi kausal yang tajam antara tingginya Niat (${niat.toFixed(1)}%) dan rendahnya Perilaku Aktual (${perilaku.toFixed(1)}%). Secara struktural, transmisi psikomotorik ini tereduksi akibat minimnya <em>Perceived Behavioral Control</em> (${pbc}%).</p></div>`);
+                else if (perilaku > niat && pbc > 70) narasi.push(`<div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200 mb-2"><p class="text-indigo-900 text-justify text-[13px] leading-relaxed"><strong class="font-black">Akselerasi Fasilatatif (Direct Effect):</strong> Tingkat perilaku aktual (${perilaku.toFixed(1)}%) mampu melampaui niat dasar kognitifnya berkat intervensi langsung dari <em>Perceived Behavioral Control</em> (${pbc}%).</p></div>`);
+                else narasi.push(`<div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 mb-2"><p class="text-zinc-700 text-justify text-[13px] leading-relaxed"><strong class="font-black text-zinc-900">Transmisi Kausalitas Linear:</strong> Transisi dari intensi kognitif menuju eksekusi perilaku aktual berjalan moderat. <em>Perceived Behavioral Control</em> (${pbc}%) berfungsi sebagai jembatan fasilitatif yang memadai.</p></div>`);
+                narasi.push(`</div>`);
+            }
+
+            narasi.push(`<div><h3 class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 pb-2 border-b border-zinc-200">Output Resiliensi Makro</h3>`);
+            if (ketahanan >= 80) narasi.push(`<div class="flex items-start bg-emerald-50 p-4 rounded-2xl border border-emerald-200"><span class="text-2xl mr-3">🛡️</span><p class="text-emerald-900 text-[13px] leading-relaxed"><strong class="font-black">Kapasitas Absorpsi Tinggi (Tangguh Bencana: ${ketahanan.toFixed(1)}%)</strong><br>Perilaku mitigasi tingkat mikro telah berhasil teragregasi menjadi <em>emergent property</em> pada level makro.</p></div>`);
+            else if (ketahanan >= 50) narasi.push(`<div class="flex items-start bg-amber-50 p-4 rounded-2xl border border-amber-200"><span class="text-2xl mr-3">⚠️</span><p class="text-amber-900 text-[13px] leading-relaxed"><strong class="font-black">Ekuilibrium Rentan (${ketahanan.toFixed(1)}%)</strong><br>Ketahanan sistemik berada pada ekuilibrium transisional. Perilaku mitigasi kumulatif belum menyentuh ambang batas <em>(threshold)</em> proteksi penuh.</p></div>`);
+            else if (ketahanan > 0) narasi.push(`<div class="flex items-start bg-rose-50 p-4 rounded-2xl border border-rose-200"><span class="text-2xl mr-3">🚨</span><p class="text-rose-900 text-[13px] leading-relaxed"><strong class="font-black">Defisit Ketahanan Sistemik (${ketahanan.toFixed(1)}%)</strong><br>Sistem berpotensi tinggi mengalami kelumpuhan <em>(systemic failure)</em> secara total saat paparan rob melampaui rata-rata historisnya.</p></div>`);
+            else narasi.push(`<div class="flex items-start bg-rose-100 p-4 rounded-2xl border border-rose-300"><span class="text-xl mr-3">❌</span><p class="text-rose-900 text-[13px] leading-relaxed"><strong class="font-black">Nihil Ketahanan (0%)</strong><br>Ketiadaan intervensi sama sekali menghasilkan kerentanan absolut.</p></div>`);
+            narasi.push(`</div>`);
+            div.innerHTML = narasi.join('');
+        }
+
+        // PENGEMBANGAN: Fungsi Cetak PDF (Sembunyikan tombol saat cetak)
+        function downloadRaporWarga() {
+            const btnArea = document.getElementById('wargaActionButtons');
+            if(btnArea) btnArea.style.display = 'none'; 
+            
+            const element = document.getElementById('hasilWargaBox');
+            html2pdf().set({ 
+                margin: [10, 10, 10, 10], 
+                filename: 'Rapor_Kesiapsiagaan_Keluarga.pdf', 
+                html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            }).from(element).save().then(() => {
+                if(btnArea) btnArea.style.display = 'flex';
+            });
+        }
+        
+        // PENGEMBANGAN: Fungsi Share ke WhatsApp
+        function shareToWA() {
+            const skor = document.getElementById('skorWarga').innerText;
+            const status = document.getElementById('dssWargaStatus').innerText;
+            const text = `Halo! Skor Ketangguhan Bencana Keluarga saya adalah *${skor}* (Status: ${status}). Yuk cek kesiapsiagaan keluargamu di Kalkulator ADAPT-GRIS System! 🌊🛡️`;
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
+        }
+
+        // PENGEMBANGAN: Logika Kalkulasi Mode Warga (Baca dari Radio Button Kuis)
+        function hitungWarga() {
+            let s = 50, n = 50, p = 50;
+            
+            const s_rad = document.querySelector('input[name="wargaSikapVal"]:checked');
+            const n_rad = document.querySelector('input[name="wargaNormaVal"]:checked');
+            const p_rad = document.querySelector('input[name="wargaPBCVal"]:checked');
+            
+            if(s_rad) s = parseFloat(s_rad.value);
+            if(n_rad) n = parseFloat(n_rad.value);
+            if(p_rad) p = parseFloat(p_rad.value);
+
+            const hasil = kalkulasiMatematika(s, n, p);
+            
+            const zonaMultiplier = 1.0; 
+            const zonaText = "Standar";
+
+            let skorAkhir = Math.min(hasil.ketahanan * zonaMultiplier, 100); 
+
+            const skorDiv = document.getElementById('skorWarga');
+            const rekDiv = document.getElementById('rekomendasiWarga');
+            const box = document.getElementById('hasilWargaBox');
+            const planContainer = document.getElementById('actionPlanContainer');
+            const planList = document.getElementById('actionPlanList');
+            let actions = [];
+            const aiPredictionContainer = document.getElementById('aiPredictionContainer');
+            const aiPredictionText = document.getElementById('aiPredictionText');
+            let aiRiskProbability = 100 - skorAkhir; 
+            let aiAdvice = "", statusText = "", statusClass = "", badgeHTML = "";
+
+            skorDiv.innerText = skorAkhir.toFixed(0) + '%';
+
+            if (skorAkhir >= 80) {
+                skorDiv.className = "text-6xl font-black text-emerald-600 mb-2 tracking-tighter transition-all";
+                box.className = "bg-emerald-50/50 p-8 rounded-[2.5rem] text-center border border-emerald-100 shadow-inner transition-colors duration-300 relative";
+                rekDiv.innerHTML = "<strong>Sangat Baik!</strong> Keluarga Anda sudah sangat siap. Pertahankan semangat gotong royong ini untuk menjaga tanggul.";
+                statusText = "TANGGUH BENCANA"; statusClass = "text-[10px] font-black text-emerald-800 bg-emerald-100 px-3 py-1 rounded-lg uppercase tracking-widest";
+                badgeHTML = `<div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full mb-4 border border-emerald-200"><span class="text-xl">🥇</span><span class="font-black text-xs uppercase tracking-widest">Keluarga Siaga Emas</span></div>`;
+            } else if (skorAkhir >= 50) {
+                skorDiv.className = "text-6xl font-black text-amber-500 mb-2 tracking-tighter transition-all";
+                box.className = "bg-amber-50/50 p-8 rounded-[2.5rem] text-center border border-amber-100 shadow-inner transition-colors duration-300 relative";
+                statusText = "EKUILIBRIUM RENTAN"; statusClass = "text-[10px] font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-lg uppercase tracking-widest";
+                rekDiv.innerHTML = (p < 50) ? "<strong>Hati-hati!</strong> Anda memiliki kepedulian, tapi terkendala dana/material. Segera daftar program bantuan perbaikan." : "<strong>Cukup Siap.</strong> Namun masih ada celah kerentanan. Mulailah siapkan tas siaga darurat.";
+                badgeHTML = `<div class="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full mb-4 border border-amber-200"><span class="text-xl">🥈</span><span class="font-black text-xs uppercase tracking-widest">Keluarga Siaga Perak</span></div>`;
+            } else {
+                skorDiv.className = "text-6xl font-black text-rose-600 mb-2 tracking-tighter transition-all";
+                box.className = "bg-rose-50/50 p-8 rounded-[2.5rem] text-center border border-rose-100 shadow-inner transition-colors duration-300 relative";
+                rekDiv.innerHTML = "<strong>Bahaya!</strong> Keluarga Anda sangat berisiko jika rob besar datang. Segera cari informasi jalur evakuasi.";
+                statusText = "RISIKO KRITIS"; statusClass = "text-[10px] font-black text-rose-800 bg-rose-100 px-3 py-1 rounded-lg uppercase tracking-widest";
+                badgeHTML = `<div class="inline-flex items-center gap-2 bg-rose-100 text-rose-800 px-4 py-2 rounded-full mb-4 border border-rose-200"><span class="text-xl">🔴</span><span class="font-black text-xs uppercase tracking-widest">Butuh Perhatian</span></div>`;
+            }
+
+            const badgeContainer = document.getElementById('badgeContainer');
+            if(badgeContainer) badgeContainer.innerHTML = badgeHTML;
+
+            if (p < 50) { actions.push("<strong>Fisik/Dana:</strong> Mulai sisihkan Rp 5.000/hari ke celengan khusus perbaikan rumah."); actions.push("<strong>Sosial:</strong> Daftarkan KK ke RT setempat untuk program subsidi material Pemprov."); }
+            if (n < 50) actions.push("<strong>Lingkungan:</strong> Inisiasi pembuatan grup WA khusus 'Siaga Rob' untuk blok RT Anda.");
+            if (s < 50) { actions.push("<strong>Kesiapsiagaan:</strong> Hafalkan jalur evakuasi dan lokasi posko banjir terdekat."); actions.push("<strong>Edukasi:</strong> Cek posisi letak saklar listrik agar tinggi dari potensi genangan."); }
+            if (actions.length === 0) { actions.push("Pastikan <strong>Tas Siaga Bencana</strong> (dokumen, senter, obat) sedia di dekat pintu."); actions.push("Bantu ingatkan tips kesiapsiagaan kepada tetangga yang letak rumahnya lebih rendah."); }
+
+            planList.innerHTML = actions.map(act => `<li>${act}</li>`).join('');
+            planContainer.classList.remove('hidden');
+
+            if (aiRiskProbability > 60) aiAdvice = `Berdasarkan tren <em>Machine Learning</em>, terdapat probabilitas kerentanan <strong>${aiRiskProbability.toFixed(1)}%</strong> rumah Anda terdampak rob bulan depan. <br><br><span class="text-zinc-900 font-bold">Rekomendasi AI:</span> Segera tingkatkan persiapan struktural minimal 20%.`;
+            else if (aiRiskProbability > 30) aiAdvice = `Sistem Prediktif membaca probabilitas risiko menengah <strong>(${aiRiskProbability.toFixed(1)}%)</strong>. Keuangan cukup, namun tren menunjukkan perlunya penguatan norma sosial. Ajak 3 tetangga membersihkan tanggul.`;
+            else aiAdvice = `Algoritma Prediktif memproyeksikan keamanan stabil dengan sisa risiko <strong>${aiRiskProbability.toFixed(1)}%</strong>. Pertahankan ekuilibrium ini.`;
+            
+            aiPredictionText.innerHTML = aiAdvice; aiPredictionContainer.classList.remove('hidden');
+
+            document.getElementById('dssWargaSikap').innerText = s + '%'; document.getElementById('dssWargaNorma').innerText = n + '%'; document.getElementById('dssWargaPBC').innerText = p + '%';
+            document.getElementById('dssWargaZona').innerText = zonaText + ` (${zonaMultiplier}x)`; document.getElementById('dssWargaKetahanan').innerText = skorAkhir.toFixed(1) + '%';
+            
+            const dssStatus = document.getElementById('dssWargaStatus'); dssStatus.innerText = statusText; dssStatus.className = statusClass;
+            const dssWargaAnalisis = document.getElementById('dssWargaAnalisis');
+            let htmlWargaAnalisis = "";
+            if (zonaMultiplier === 0.85 && skorAkhir < 60) htmlWargaAnalisis = "<span class='block text-[10px] font-black uppercase text-rose-500 tracking-wider mb-1'>Status Geospasial Merah</span> Rumah tangga berada di episentrum kerentanan (Zona Pesisir). Mengingat faktor risiko alam sangat tinggi (pengali 0.85x), keluarga ini mutlak membutuhkan evakuasi darurat.";
+            else if (p < 40) htmlWargaAnalisis = "<span class='block text-[10px] font-black uppercase text-amber-500 tracking-wider mb-1'>Kerentanan Finansial</span> Rumah tangga mendeteksi defisit kemampuan finansial/material. Warga tidak memiliki daya untuk membangun pertahanan mandiri. Masukkan ke Prioritas Bantuan Kelurahan.";
+            else if (n < 40) htmlWargaAnalisis = "<span class='block text-[10px] font-black uppercase text-indigo-500 tracking-wider mb-1'>Disorganisasi Sosial</span> Keluarga ini mengalami isolasi mitigasi. Ketiadaan norma sosial menyebabkan apatisme komunal. Diperlukan penguatan kapasitas RT/RW.";
+            else htmlWargaAnalisis = "<span class='block text-[10px] font-black uppercase text-emerald-500 tracking-wider mb-1'>Kapasitas Memadai</span> Distribusi modal sosial dan ekonomi keluarga berjalan proporsional. Jadikan warga ini sebagai pionir mitigasi lokal.";
+            dssWargaAnalisis.innerHTML = htmlWargaAnalisis;
+        }
+
+        window.onload = function() {
+            loadData();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('mode') === 'respondent') {
+                document.getElementById('mainHeader').style.display = 'none';
+                document.getElementById('viewAkademik').classList.add('hidden');
+                document.getElementById('viewWarga').classList.add('hidden');
+                document.getElementById('viewDSS').classList.add('hidden');
+                const viewSurvei = document.getElementById('viewSurvei');
+                viewSurvei.classList.remove('hidden');
+                document.getElementById('surveiToggleContainer').style.display = 'none';
+                document.querySelector('#viewSurvei h2').parentElement.style.display = 'none';
+                document.getElementById('surveiEditMode').classList.add('hidden');
+                document.getElementById('surveiFillMode').classList.remove('hidden');
+                document.getElementById('btnShareSurvey').classList.add('hidden');
+                renderSurveyForm();
+                return; 
+            }
+
+            syncTPBWithSurvey();
+            updateSimulation();
+            hitungWarga();
+            renderSurveyEditor(); 
+            updateDSSSurveyTable(); 
+        };
+    </script>
+</body>
+</html>
