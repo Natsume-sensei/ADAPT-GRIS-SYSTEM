@@ -111,11 +111,11 @@
                 <button id="btnTabWarga" onclick="switchTab('warga')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
                     📱 Mode Warga
                 </button>
-                <button id="btnTabSurvei" onclick="switchTab('survei')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
-                    📝 Pembuat Survei
+                <button id="btnTabSurvei" onclick="showPengembanganAlert()" class="px-7 py-3 bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed font-bold rounded-2xl shadow-sm transition-all">
+                    🔒 Pembuat Survei
                 </button>
-                <button id="btnTabDSS" onclick="switchTab('dss')" class="px-7 py-3 bg-white text-zinc-600 border border-zinc-200 hover:text-zinc-950 hover:border-zinc-300 font-bold rounded-2xl shadow-sm transition-all hover:scale-105 active:scale-95 focus:ring-4 focus:ring-zinc-100">
-                    📊 Dasbor DSS
+                <button id="btnTabDSS" onclick="showPengembanganAlert()" class="px-7 py-3 bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed font-bold rounded-2xl shadow-sm transition-all">
+                    🔒 Dasbor DSS
                 </button>
             </div>
         </header>
@@ -709,6 +709,10 @@
         let surveyResponses = [];
         let surveyChartInstance = null;
 
+        function showPengembanganAlert() {
+            alert("Fitur ini masih dalam Pengembangan");
+        }
+
         function loadData() {
             const savedQ = localStorage.getItem('adaptGrisQuestions');
             const savedR = localStorage.getItem('adaptGrisResponses');
@@ -741,10 +745,14 @@
         }
 
         function switchTab(tab) {
+            if (tab === 'survei' || tab === 'dss') {
+                showPengembanganAlert();
+                return;
+            }
+
             const btnAkademik = document.getElementById('btnTabAkademik');
             const btnWarga = document.getElementById('btnTabWarga');
-            const btnDSS = document.getElementById('btnTabDSS');
-            const btnSurvei = document.getElementById('btnTabSurvei'); 
+            // Tombol Survei dan DSS dibiarkan dalam keadaan lock
             
             const viewAkademik = document.getElementById('viewAkademik');
             const viewWarga = document.getElementById('viewWarga');
@@ -761,8 +769,6 @@
             
             btnAkademik.className = defaultClass;
             btnWarga.className = defaultClass;
-            btnDSS.className = defaultClass;
-            btnSurvei.className = defaultClass;
 
             if (tab === 'akademik') {
                 btnAkademik.className = activeClass;
@@ -771,17 +777,6 @@
                 btnWarga.className = activeClass;
                 viewWarga.classList.remove('hidden');
                 hitungWarga(); 
-            } else if (tab === 'dss') {
-                btnDSS.className = activeClass;
-                viewDSS.classList.remove('hidden');
-                syncTPBWithSurvey(); 
-                updateSimulation(); 
-                hitungWarga();
-                updateDSSSurveyTable(); 
-            } else if (tab === 'survei') {
-                btnSurvei.className = activeClass;
-                viewSurvei.classList.remove('hidden');
-                renderSurveyEditor();
             }
         }
 
@@ -1425,19 +1420,86 @@
             div.innerHTML = narasi.join('');
         }
 
-        // PENGEMBANGAN: Fungsi Cetak PDF (Sembunyikan tombol saat cetak)
+        // PERBAIKAN: Fungsi Cetak Laporan Mode Akademik
+        function exportToPDF() {
+            const actionBtns = document.getElementById('action-buttons-akademik');
+            if(actionBtns) actionBtns.style.display = 'none';
+
+            const element = document.getElementById('pdf-content');
+            const originalBg = element.style.backgroundColor;
+            const originalPadding = element.style.padding;
+            
+            // Atur style sementara agar terunduh dengan baik tanpa kendala blank
+            element.style.backgroundColor = '#ffffff';
+            element.style.padding = '20px';
+
+            // Penambahan format standar laporan (Kop Surat)
+            const kopSurat = document.createElement('div');
+            kopSurat.id = 'temp-kop-surat';
+            kopSurat.innerHTML = `
+                <div style="text-align:center; margin-bottom: 25px; border-bottom: 3px solid #000; padding-bottom: 15px; color: black; font-family: sans-serif;">
+                    <h2 style="font-size: 24px; font-weight: 900; margin:0; text-transform: uppercase;">Laporan Analisis ADAPT-GRIS System</h2>
+                    <p style="font-size: 16px; margin:5px 0 0 0; font-weight: 600;">Universitas Negeri Jakarta</p>
+                    <p style="font-size: 12px; margin:5px 0 0 0; color: #555;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+                </div>
+            `;
+            element.insertBefore(kopSurat, element.firstChild);
+
+            alert('Sedang menyiapkan Laporan Akademik. Mohon tunggu beberapa saat...');
+
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     'Laporan_Akademik_ADAPT_GRIS.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Kembalikan ke normal
+                if(actionBtns) actionBtns.style.display = 'flex';
+                element.removeChild(document.getElementById('temp-kop-surat'));
+                element.style.backgroundColor = originalBg;
+                element.style.padding = originalPadding;
+            });
+        }
+
+        // PERBAIKAN: Fungsi Cetak PDF Mode Warga (Mengatasi isu halaman Blank & Penambahan Kop Resmi)
         function downloadRaporWarga() {
             const btnArea = document.getElementById('wargaActionButtons');
             if(btnArea) btnArea.style.display = 'none'; 
             
             const element = document.getElementById('hasilWargaBox');
+            const originalClass = element.className;
+            
+            // Format laporan distandardisasi dan menghindari bug html2pdf terkait styling yang rumit
+            element.className = "bg-white p-8 border border-zinc-200 text-center";
+
+            // Tambahkan Header / Kop Laporan Resmi
+            const kopSuratWarga = document.createElement('div');
+            kopSuratWarga.id = 'temp-kop-surat-warga';
+            kopSuratWarga.innerHTML = `
+                <div style="text-align:center; margin-bottom: 25px; border-bottom: 3px solid #000; padding-bottom: 15px; color: black; font-family: sans-serif;">
+                    <h2 style="font-size: 22px; font-weight: 900; margin:0; text-transform: uppercase;">Rapor Kesiapsiagaan Bencana Warga</h2>
+                    <p style="font-size: 14px; margin:5px 0 0 0; font-weight: 600;">Platform ADAPT-GRIS System - Universitas Negeri Jakarta</p>
+                    <p style="font-size: 11px; margin:5px 0 0 0; color: #555;">Waktu Asesmen: ${new Date().toLocaleString('id-ID')}</p>
+                </div>
+            `;
+            element.insertBefore(kopSuratWarga, element.firstChild);
+            
+            alert('Sedang menyiapkan Rapor Warga. Mohon tunggu...');
+
             html2pdf().set({ 
-                margin: [10, 10, 10, 10], 
+                margin: [15, 15, 15, 15], 
                 filename: 'Rapor_Kesiapsiagaan_Keluarga.pdf', 
-                html2canvas: { scale: 2, backgroundColor: '#ffffff' }, 
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 }, 
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             }).from(element).save().then(() => {
+                // Kembalikan ke tampilan Web Semula setelah berhasil didownload
                 if(btnArea) btnArea.style.display = 'flex';
+                element.removeChild(document.getElementById('temp-kop-surat-warga'));
+                element.className = originalClass; 
             });
         }
         
